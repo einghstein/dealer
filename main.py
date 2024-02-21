@@ -28,8 +28,17 @@ def mouse_pressed(x=0,y=0,button="LEFT"):
     else:
          vse.append(entities.Bullet(char.x,char.y,x,y,char))
 
+middle = []
+for i in range(0, int(okno.x//50)+1):
+    if i%2 == 0:
+        middle.append(pygame.rect.Rect(50*i,okno.y//2+5,50,10))
+    middle.append(pygame.rect.Rect(0, okno.y//2+105,okno.x,15))
+    middle.append(pygame.rect.Rect(0, okno.y//2-105,okno.x,15))
+
 def redraw():
     window.fill((50,50,50))
+    for rect in middle:
+         pygame.draw.rect(window, (255,255,255), rect)
     window.blit(char.img,(char.x,char.y))
     for v in vse:
         window.blit(v.img,(v.x,v.y))
@@ -42,7 +51,7 @@ def redraw():
     pygame.display.update()
 
 window = pygame.display.set_mode((okno.x,okno.y))
-pygame.display.set_caption("change me")
+pygame.display.set_caption("dealer")
 
 char = entities.Char()
 vse = [char]
@@ -52,7 +61,7 @@ for i in range(0,3):
 temp = None
 
 def snitch():
-     pass
+    vse.append(entities.Cop(0,0,True,char.x,char.y))
 
 def check_coll_class(prvni,druha):
     if prvni.x - druha.sirka < druha.x + druha.sirka//2 < prvni.x + prvni.sirka:
@@ -62,7 +71,7 @@ def check_coll_class(prvni,druha):
                         if druha.x < prvni.x+x < druha.x+druha.sirka:
                             if druha.y < prvni.y+y < druha.y+druha.vyska:
                                 return(True)
-
+snitch()
 while run:
     clock.tick(60)
     for event in pygame.event.get():
@@ -74,7 +83,7 @@ while run:
                     mouse_pressed(pos[0],pos[1],"LEFT")
                 if pygame.mouse.get_pressed()[2]:
                      mouse_pressed(pos[0],pos[1],"RIGHT")
-    
+
     for e in vse:
          e.walk(vse,okno)
 
