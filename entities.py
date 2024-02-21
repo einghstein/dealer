@@ -60,7 +60,7 @@ class Char:
                 self.x = self.x+self.rychlost
                 self.img = pygame.image.load("images/right.png")
                 for t in vse:
-                    if t != self:
+                    if t != self and not(isinstance(t, Cop)):
                         if check_coll_class(self,t):
                             self.x = (self.x-self.rychlost)
 
@@ -68,7 +68,7 @@ class Char:
                 self.x = self.x-self.rychlost
                 self.img = pygame.image.load("images/left.png")
                 for t in vse:
-                    if t != self:
+                    if t != self and not(isinstance(t, Cop)):
                         if check_coll_class(self,t):
                             self.x = (self.x+self.rychlost)
 
@@ -76,7 +76,7 @@ class Char:
                 self.y = self.y-self.rychlost
                 self.img = pygame.image.load("images/back.png")
                 for t in vse:
-                    if t != self:
+                    if t != self and not(isinstance(t, Cop)):
                         if check_coll_class(self,t):
                             self.y = self.y+self.rychlost
 
@@ -84,7 +84,7 @@ class Char:
                 self.y = self.y+self.rychlost
                 self.img = pygame.image.load("images/forward.png")
                 for t in vse:
-                    if t != self:
+                    if t != self and not(isinstance(t, Cop)):
                         if check_coll_class(self,t):
                             self.y = self.y-self.rychlost
 
@@ -98,7 +98,7 @@ class Bullet:
         self.mx = mx + self.sirka
         self.my = my + self.vyska
         speed = 15
-        self.angle = math.atan2(y - my, x - mx)
+        self.angle = math.atan2(y - msy, x - mx)
         self.x_vel = math.cos(self.angle) * speed
         self.y_vel = math.sin(self.angle) * speed
         self.shooter = shooter
@@ -110,10 +110,50 @@ class Bullet:
                 if check_coll_class(self,e):
                     bullets.remove(e)
                     bullets.remove(self)
-        try:
-            if self.x < 0 or self.x > window.get_width():
+        if self.x < 0 or self.x > window.x:
+            try:
                 bullets.pop(bullets.index(self))
-            if self.y < 0 or self.y > window.get_width():
+            except:
+                pass
+        if self.y < 0 or self.y > window.y:
+            try:
                 bullets.pop(bullets.index(self))
-        except:
-            print("lag")  
+            except:
+                pass
+
+class Cop:
+    def __init__(self, x, y, is_angry, tox, toy):
+        self.x = x
+        self.y = y
+        self.img = pygame.image.load("images/cop_front.png")
+        self.sirka = self.img.get_width()
+        self.vyska = self.img.get_height()
+        self.agro = is_angry
+        self.dir_x = tox
+        self.dir_y = toy
+        self.speed = 9 if is_angry else 7
+    def walk(self,vse,window):
+        for i in range(1,self.speed):
+            if self.dir_x == self.x:
+                if self.dir_y == self.y:
+                    if self.agro:
+                        self.dir_x = vse[0].x
+                        self.dir_y = vse[0].y
+                    else:
+                        self.dir_x = randint(0,window.x-self.sirka)
+                        self.dir_y = randint(0,window.y-self.vyska)
+            else:
+                if self.x > self.dir_x:
+                    self.x -= 1
+                    self.img = pygame.image.load("images/cop_left.png")
+                else:
+                    self.x += 1
+                    self.img = pygame.image.load("images/cop_right.png")
+            if self.dir_y != self.y:
+                if self.y > self.dir_y:
+                    self.y -= 1
+                    self.img = pygame.image.load("images/cop_back.png")
+                else:
+                    self.y += 1
+                    self.img = pygame.image.load("images/cop_front.png")
+        
