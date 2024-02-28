@@ -51,42 +51,42 @@ class Char:
     y = 1080//2
     sirka = img.get_width()
     vyska = img.get_height()
-    rychlost = 8
-    wheat = 1
+    rychlost = 9
+    wheat = 100
     coin = 0
     def walk(self,vse,window):
             keys = pygame.key.get_pressed()
-            if keys[pygame.K_d] and self.x < 1920-self.sirka:
+            if keys[pygame.K_d] and self.x < window.x-self.sirka:
                 self.x = self.x+self.rychlost
                 self.img = pygame.image.load("images/right.png")
-                for t in vse:
-                    if t != self and not(isinstance(t, Cop)):
-                        if check_coll_class(self,t):
-                            self.x = (self.x-self.rychlost)
+                #for t in vse:
+                #    if t != self and not(isinstance(t, Cop)):
+                #        if check_coll_class(self,t):
+                #self.x = (self.x-self.rychlost)
 
             if keys[pygame.K_a] and self.x > self.rychlost:
                 self.x = self.x-self.rychlost
                 self.img = pygame.image.load("images/left.png")
-                for t in vse:
-                    if t != self and not(isinstance(t, Cop)):
-                        if check_coll_class(self,t):
-                            self.x = (self.x+self.rychlost)
+                #for t in vse:
+                #    if t != self and not(isinstance(t, Cop)):
+                #        if check_coll_class(self,t):
+                #self.x = (self.x+self.rychlost)
 
             if keys[pygame.K_w] and self.y > self.rychlost:
                 self.y = self.y-self.rychlost
                 self.img = pygame.image.load("images/back.png")
-                for t in vse:
-                    if t != self and not(isinstance(t, Cop)):
-                        if check_coll_class(self,t):
-                            self.y = self.y+self.rychlost
+                #for t in vse:
+                #    if t != self and not(isinstance(t, Cop)):
+                #        if check_coll_class(self,t):
+                #self.y = self.y+self.rychlost
 
-            if keys[pygame.K_s] and self.y < 1080-self.vyska:
+            if keys[pygame.K_s] and self.y+self.vyska < window.y:
                 self.y = self.y+self.rychlost
                 self.img = pygame.image.load("images/forward.png")
-                for t in vse:
-                    if t != self and not(isinstance(t, Cop)):
-                        if check_coll_class(self,t):
-                            self.y = self.y-self.rychlost
+                #for t in vse:
+                #    if t != self and not(isinstance(t, Cop)):
+                #        if check_coll_class(self,t):
+                #self.y = self.y-self.rychlost
 
 class Bullet:
     def __init__(self,x,y,mx,my,shooter):
@@ -98,7 +98,7 @@ class Bullet:
         self.mx = mx + self.sirka
         self.my = my + self.vyska
         speed = 15
-        self.angle = math.atan2(y - msy, x - mx)
+        self.angle = math.atan2(y - my, x - mx)
         self.x_vel = math.cos(self.angle) * speed
         self.y_vel = math.sin(self.angle) * speed
         self.shooter = shooter
@@ -106,10 +106,13 @@ class Bullet:
         self.x -= self.x_vel
         self.y -= self.y_vel
         for e in bullets:
-            if e != self.shooter and e != self:
-                if check_coll_class(self,e):
-                    bullets.remove(e)
-                    bullets.remove(self)
+            if e != self.shooter:
+                if check_coll_class(self,e) and not(isinstance(e,Bullet)):
+                    try:
+                        bullets.remove(e)
+                        bullets.remove(self)
+                    except:
+                        pass
         if self.x < 0 or self.x > window.x:
             try:
                 bullets.pop(bullets.index(self))
@@ -157,3 +160,9 @@ class Cop:
                     self.y += 1
                     self.img = pygame.image.load("images/cop_front.png")
         
+class Car:
+    def __init__(self,x,y,speed,is_cop):
+        self.x = x
+        self.y = y
+        self.speed = speed
+        self.is_cop = is_cop
