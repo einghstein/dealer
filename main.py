@@ -71,7 +71,25 @@ def check_coll_class(prvni,druha):
                         if druha.x < prvni.x+x < druha.x+druha.sirka:
                             if druha.y < prvni.y+y < druha.y+druha.vyska:
                                 return(True)
-snitch()
+                            
+inside = False
+while inside:
+    clock.tick(60)
+    for event in pygame.event.get():
+       if event.type == pygame.QUIT:
+            inside = False
+            run = False
+
+       if event.type == pygame.MOUSEBUTTONDOWN:
+           pos = pygame.mouse.get_pos()
+           if pygame.mouse.get_pressed()[0]:
+               mouse_pressed(pos[0],pos[1],"LEFT")
+           if pygame.mouse.get_pressed()[2]:
+                mouse_pressed(pos[0],pos[1],"RIGHT")
+
+    vse[0].walk(vse,okno)
+
+
 while run:
     clock.tick(60)
     for event in pygame.event.get():
